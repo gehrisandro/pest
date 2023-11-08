@@ -10,6 +10,7 @@ use Pest\Factories\Covers\CoversClass;
 use Pest\Factories\Covers\CoversFunction;
 use Pest\Factories\Covers\CoversNothing;
 use Pest\Factories\TestCaseMethodFactory;
+use Pest\Mutate\Decorators\TestCallDecorator as MutationTestCallDecorator;
 use Pest\PendingCalls\Concerns\Describable;
 use Pest\Plugins\Only;
 use Pest\Support\Backtrace;
@@ -429,6 +430,19 @@ final class TestCall
         }
 
         return $this;
+    }
+
+    /**
+     * Enables mutation testing
+     */
+    public function mutate(string $profile = 'default'): self|MutationTestCallDecorator
+    {
+        if (class_exists(MutationTestCallDecorator::class)) {
+            return (new MutationTestCallDecorator($this))
+                ->mutate($profile);
+        }
+
+        return $this->__call('mutate', [$profile]);
     }
 
     /**
